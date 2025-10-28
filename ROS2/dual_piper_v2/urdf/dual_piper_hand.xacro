@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="dual_piper_xacro">
+
+
+<xacro:include filename="$(find dual_piper_v2)/urdf/dual_piper_v2.urdf"/>
+
+<xacro:include filename="$(find dual_piper_v2)/urdf/piper_fl.urdf"/>
+<xacro:include filename="$(find dual_piper_v2)/urdf/piper_fr.urdf"/>
+<xacro:include filename="$(find dual_piper_v2)/urdf/brainco-lefthand-URDF-V2.urdf"/>
+<xacro:include filename="$(find dual_piper_v2)/urdf/brainco-righthand-URDF-V2.urdf"/>
+
+
+
+<joint name="base_to_piper_fl" type="fixed">
+    <origin xyz=" 0.0075 -0.3 -0.01" rpy="0.0 0.0 0.0"/>
+    <parent link="base_link"/>
+    <child link="fl_base_link"/>
+    <axis xyz="0.0 0.0 0.0"/>
+</joint>
+
+<joint name="piper_fl_to_left_hand" type="fixed">
+    <origin xyz=" 0.00 0.0 0.065" rpy="0.0 0.0 -1.57"/>
+    <parent link="fl_link6"/>
+    <child link="left_base_link"/>
+    <axis xyz="0.0 0.0 0.0"/>
+</joint>
+
+
+<joint name="base_to_piper_fr" type="fixed">
+    <origin xyz="0.0075 0.3 -0.01" rpy="0.0 0.0 0.0"/>
+    <parent link="base_link"/>
+    <child link="fr_base_link"/>
+    <axis xyz="0.0 0.0 0.0"/>
+</joint>
+
+<joint name="piper_fl_to_right_hand" type="fixed">
+    <origin xyz=" 0.00 0.0 0.065" rpy="0.0 0.0 -1.57"/>
+    <parent link="fr_link6"/>
+    <child link="right_base_link"/>
+    <axis xyz="0.0 0.0 0.0"/>
+</joint>
+
+    
+</robot>

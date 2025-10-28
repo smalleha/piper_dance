@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="piper">
+    
+<xacro:include filename="$(find piper_description)/urdf/piper_description_with_camera_left.xacro"/>
+<xacro:include filename="$(find piper_description)/urdf/piper_description_with_camera_right.xacro"/>
+<xacro:include filename="$(find piper_description)/urdf/piper_description_with_camera_front_left.xacro"/>
+<xacro:include filename="$(find piper_description)/urdf/piper_description_with_camera_front_right.xacro"/>
+
+    <xacro:left_arm namespace="left">
+    </xacro:left_arm>
+
+    <xacro:right_arm namespace="right">
+    </xacro:right_arm>
+
+    <xacro:front_left namespace="front_left">
+    </xacro:front_left>
+
+    <xacro:front_right namespace="front_right">
+    </xacro:front_right>
+
+    <link name="arm_base_link"/>
+    
+    <link name="box_link">
+        <visual>
+            <geometry>
+                <box size="0.1 0.7 0.1" />
+            </geometry>
+            <material name="LightGrey">
+                <color rgba="0.7 0.7 0.7 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.1 0.7 0.05" />
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.11"/>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+        </inertial>
+    </link>
+
+    <link name="box2_link">
+        <visual>
+            <geometry>
+                <box size="0.1 0.7 0.1" />
+            </geometry>
+            <material name="LightGrey">
+                <color rgba="0.7 0.7 0.7 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.1 0.7 0.05" />
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.11"/>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+        </inertial>
+    </link>
+
+    <joint name="base_to_box" type="fixed">
+        <origin xyz="-0.31 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="box_link"/>
+    </joint>
+
+    <joint name="base_to_box2" type="fixed">
+        <origin xyz="0.29 0.0 -0.25" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="box2_link"/>
+    </joint>
+
+    <joint name="left_arm" type="fixed">
+        <origin xyz="-0.3 0.30 0.05" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="left/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="right_arm" type="fixed">
+        <origin xyz="-0.3 -0.30 0.05" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="right/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+
+    <joint name="front_left_arm" type="fixed">
+        <origin xyz="0.3 0.30 -0.2" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="front_left/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="front_right_arm" type="fixed">
+        <origin xyz="0.3 -0.30 -0.2" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="front_right/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+
+</robot>

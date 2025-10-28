@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="dual_piper_v2">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.00027232 2.5804E-17 -0.0039833"
+        rpy="0 0 0" />
+      <mass
+        value="0.56085" />
+      <inertia
+        ixx="0.018199"
+        ixy="-1.4523E-18"
+        ixz="-4.6233E-07"
+        iyy="0.00069652"
+        iyz="-1.8657E-20"
+        izz="0.018889" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dual_piper_v2/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dual_piper_v2/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="lifting_camera_Link">
+    <inertial>
+      <origin
+        xyz="0.018474 0 -0.0010785"
+        rpy="0 0 0" />
+      <mass
+        value="0.029549" />
+      <inertia
+        ixx="7.8329E-06"
+        ixy="-6.0628E-21"
+        ixz="-6.2532E-07"
+        iyy="9.7867E-06"
+        iyz="4.8633E-21"
+        izz="1.0227E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dual_piper_v2/meshes/lifting_camera_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://dual_piper_v2/meshes/lifting_camera_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="lifting_camera_joint"
+    type="fixed">
+    <origin
+      xyz="-0.049086 0 0.51148"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="lifting_camera_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>

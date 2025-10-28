@@ -1,0 +1,334 @@
+actions:
+  - name: dance_pose_v1_1
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_2
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_3
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_4
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_5
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_6
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_7
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_8
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_9
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_10
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_11
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_12
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_13
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_14
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_15
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_16
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      -0.52, 1.8, -0.52, 0.0, -1.22, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_17
+    enable: true
+    start: [
+      -0.52, 1.8, -0.52, 0.0, -1.22, 0.0,
+    ]
+    end: [
+      -0.26, 1.1, -0.52, 0.0, -0.52, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_18
+    enable: true
+    start: [
+      -0.26, 1.1, -0.52, 0.0, -0.52, 0.0,
+    ]
+    end: [
+      0.0, 1.8, -0.52, 0.0, -1.22, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_19
+    enable: true
+    start: [
+      0.0, 1.8, -0.52, 0.0, -1.22, 0.0,
+    ]
+    end: [
+      0.26, 1.1, -0.52, 0.0, -0.52, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_20
+    enable: true
+    start: [
+      0.26, 1.1, -0.52, 0.0, -0.52, 0.0,
+    ]
+    end: [
+      0.52, 1.8, -0.52, 0.0, -1.22, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_21
+    enable: true
+    start: [
+      0.52, 1.8, -0.52, 0.0, -1.22, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_21
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      -0.52, 1.8, -0.52, 0.0, -1.22, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_22
+    enable: true
+    start: [
+      -0.52, 1.8, -0.52, 0.0, -1.22, 0.0,
+    ]
+    end: [
+      -0.26, 1.1, -0.52, 0.0, -0.52, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_23
+    enable: true
+    start: [
+      -0.26, 1.1, -0.52, 0.0, -0.52, 0.0,
+    ]
+    end: [
+      0.0, 1.8, -0.52, 0.0, -1.22, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_24
+    enable: true
+    start: [
+      0.0, 1.8, -0.52, 0.0, -1.22, 0.0,
+    ]
+    end: [
+      0.26, 1.1, -0.52, 0.0, -0.52, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_25
+    enable: true
+    start: [
+      0.26, 1.1, -0.52, 0.0, -0.52, 0.0,
+    ]
+    end: [
+      0.52, 1.8, -0.52, 0.0, -1.22, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v1_26
+    enable: true
+    start: [
+      0.52, 1.8, -0.52, 0.0, -1.22, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v2_1
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 1.57, -1.57, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v2_2
+    enable: true
+    start: [
+      0.0, 1.57, -1.57, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 1.57, -0.26, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v2_3
+    enable: true
+    start: [
+      0.0, 1.57, -0.26, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      -1.04, 2.09, -2.618, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v2_4
+    enable: true
+    start: [
+      -1.04, 2.09, -2.618, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      1.04, 2.09, -2.618, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v2_5
+    enable: true
+    start: [
+      1.04, 2.09, -2.618, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      -0.78, 2.46, -2.4, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v2_6
+    enable: true
+    start: [
+      -0.78, 2.46, -2.4, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, -1.57, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v2_7
+    enable: true
+    start: [
+      0.0, 0.0, -1.57, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, -1.57, 0.0, 1.22, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v2_8
+    enable: true
+    start: [
+      0.0, 0.0, -1.57, 0.0, 1.22, 0.0,
+    ]
+    end: [
+      0.0, 0.0, -1.57, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v2_9
+    enable: true
+    start: [
+      0.0, 0.0, -1.57, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 1.57, -1.57, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: dance_pose_v2_10
+    enable: true
+    start: [
+      0.0, 1.57, -1.57, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05

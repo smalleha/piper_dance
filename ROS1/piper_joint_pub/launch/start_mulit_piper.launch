@@ -1,0 +1,8 @@
+<launch>
+  <node pkg="piper_joint_pub" type="piper_multi_joint" name="piper_multi_joint" output="screen">
+    <param name="num_arms" value="3"/> <!-- 要加载的机械臂数量 -->
+    <param name="arm_prefix" value="piper_"/> <!-- 文件前缀 -->
+    <param name="base_path" value="/home/q/ros1/dual_piper_ws/src/piper_joint_pub/config/"/> <!-- YAML 路径 -->
+    <param name="delay_step" value="2.5"/> <!-- 每个机械臂动作延迟（秒） -->
+  </node>
+</launch>

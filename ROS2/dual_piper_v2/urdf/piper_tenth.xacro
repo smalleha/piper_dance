@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="piper">
+    
+<xacro:include filename="$(find dual_piper_v2)/urdf/piper_mamo.xacro"/>
+
+    <xacro:namespace namespace="piper_1">
+    </xacro:namespace>
+
+    <xacro:namespace namespace="piper_2">
+    </xacro:namespace>
+
+    <xacro:namespace namespace="piper_3">
+    </xacro:namespace>
+
+    <xacro:namespace namespace="piper_4">
+    </xacro:namespace>
+
+    <xacro:namespace namespace="piper_5">
+    </xacro:namespace>
+
+    <xacro:namespace namespace="piper_6">
+    </xacro:namespace>
+
+    <xacro:namespace namespace="piper_7">
+    </xacro:namespace>
+
+    <xacro:namespace namespace="piper_8">
+    </xacro:namespace>
+
+    <xacro:namespace namespace="piper_9">
+    </xacro:namespace>
+
+    <xacro:namespace namespace="piper_10">
+    </xacro:namespace>
+
+    <link name="arm_base_link">
+        <inertial>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <mass value="100.0"/>
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+        </inertial>
+        <visual name="">
+            <origin xyz="0.057 0.0 -0.025" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="package://dual_piper_v2/meshes/site.stl" />
+            </geometry>
+            <material name="">
+                <color rgba="0.5 0.5 0.5 1.0"/>
+                <texture filename=""/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <box size="0.0 0.0 0.0"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="piper_1_arm" type="fixed">
+        <origin xyz="0.63415 1.20559 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="piper_1/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="piper_2_arm" type="fixed">
+        <origin xyz="0.0 1.20559 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="piper_2/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="piper_3_arm" type="fixed">
+        <origin xyz="-0.63415 1.20559 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="piper_3/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="piper_4_arm" type="fixed">
+        <origin xyz="0.63415 0.72641 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="piper_4/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="piper_5_arm" type="fixed">
+        <origin xyz="0.63415 0.24341 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="piper_5/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="piper_6_arm" type="fixed">
+        <origin xyz="0.63415 -0.24341 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="piper_6/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="piper_7_arm" type="fixed">
+        <origin xyz="0.63415 -0.72641 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="piper_7/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="piper_8_arm" type="fixed">
+        <origin xyz="-0.63415 -1.20559 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="piper_8/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="piper_9_arm" type="fixed">
+        <origin xyz="0.0 -1.20559  0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="piper_9/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="piper_10_arm" type="fixed">
+        <origin xyz="0.63415 -1.20559 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="arm_base_link"/>
+        <child link="piper_10/arm_base"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+
+</robot>

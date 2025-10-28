@@ -1,0 +1,46 @@
+actions:
+  - name: start_pose
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      2.618, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: pose_a
+    enable: true
+    start: [
+      2.618, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: pose_b
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 1.57, -1.57, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: pose_highlight
+    enable: true
+    start: [
+      0.0, 1.57, -1.57, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 1.57, -1.57, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
+  - name: home_pose
+    enable: true
+    start: [
+      0.0, 1.57, -1.57, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    step: 0.05
