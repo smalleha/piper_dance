@@ -1,0 +1,61 @@
+<launch>
+  <arg name="can_port_1" default="can0" />
+  <arg name="auto_enable" default="true" />
+  <arg name="gripper_val_mutiple" default="1" />
+
+  <arg name="can_port_2" default="can1" />
+  <arg name="can_port_3" default="can2" />
+  <arg name="can_port_4" default="can3" />
+
+
+
+  <!-- <include file="$(find piper_description)/launch/display_xacro.launch"/> -->
+  <!-- 启动机械臂节点 -->
+  <group ns="piper_1">
+  <node name="piper_ctrl_1_node" pkg="piper" type="piper_ctrl_single_node.py" output="screen">
+    <param name="can_port" value="$(arg can_port_1)" />
+    <param name="auto_enable" value="$(arg auto_enable)" />
+    <param name="gripper_val_mutiple" value="$(arg gripper_val_mutiple)" />
+    <!-- <param name="rviz_ctrl_flag" value="true" /> -->
+    <param name="girpper_exist" value="true" />
+    <remap from="joint_ctrl_single" to="/piper_1/joint_states" />
+  </node>
+  </group>
+
+  <group ns="piper_2">
+  <node name="piper_ctrl_2_node" pkg="piper" type="piper_ctrl_single_node.py" output="screen">
+    <param name="can_port" value="$(arg can_port_2)" />
+    <param name="auto_enable" value="$(arg auto_enable)" />
+    <param name="gripper_val_mutiple" value="$(arg gripper_val_mutiple)" />
+    <!-- <param name="rviz_ctrl_flag" value="true" /> -->
+    <param name="girpper_exist" value="true" />
+    <remap from="joint_ctrl_single" to="/piper_2/joint_states" />
+  </node>
+  </group>
+
+  <group ns="piper_3">
+  <node name="piper_ctrl_2_node" pkg="piper" type="piper_ctrl_single_node.py" output="screen">
+    <param name="can_port" value="$(arg can_port_3)" />
+    <param name="auto_enable" value="$(arg auto_enable)" />
+    <param name="gripper_val_mutiple" value="$(arg gripper_val_mutiple)" />
+    <!-- <param name="rviz_ctrl_flag" value="true" /> -->
+    <param name="girpper_exist" value="true" />
+    <remap from="joint_ctrl_single" to="/piper_3/joint_states" />
+  </node>
+  </group>
+
+  <group ns="piper_4">
+  <node name="piper_ctrl_2_node" pkg="piper" type="piper_ctrl_single_node.py" output="screen">
+    <param name="can_port" value="$(arg can_port_4)" />
+    <param name="auto_enable" value="$(arg auto_enable)" />
+    <param name="gripper_val_mutiple" value="$(arg gripper_val_mutiple)" />
+    <!-- <param name="rviz_ctrl_flag" value="true" /> -->
+    <param name="girpper_exist" value="true" />
+    <remap from="joint_ctrl_single" to="/piper_4/joint_states" />
+  </node>
+  </group>
+
+  
+
+</launch>
+

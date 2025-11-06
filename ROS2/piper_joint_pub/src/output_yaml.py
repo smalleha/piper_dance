@@ -42,7 +42,7 @@ def main():
     new_data = {"actions": new_actions}
 
     # 指定输出路径
-    output_dir = "/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/mamo/"
+    output_dir = "/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/mamo/piper"
     os.makedirs(output_dir, exist_ok=True)  # 确保目录存在
 
     filename = f"piper_{x+1}.yaml"

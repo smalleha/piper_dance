@@ -21,7 +21,7 @@ public:
         // 发布 hand_cmd
         hand_publisher_ = this->create_publisher<std_msgs::msg::String>("/hand_cmd", 10);
 
-        std::string yaml_path = "/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/mamo/mamo_pose.yaml";
+        std::string yaml_path = "/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/mamo/mamo_pose_v2.yaml";
         load_yaml(yaml_path);
 
         // === 初始化 10个机械臂的60个关节 ===
