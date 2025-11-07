@@ -16,7 +16,7 @@ def generate_nodes(context):
         can_port = f'can{i}'  # 从 can1 开始
         node = Node(
             package='piper',
-            executable='piper_ctrl_single_node.py',
+            executable='piper_single_ctrl',
             name=f'piper_ctrl_node_{i}',
             namespace=ns,
             output='screen',
