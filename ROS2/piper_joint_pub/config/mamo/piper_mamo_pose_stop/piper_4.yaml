@@ -1,0 +1,10 @@
+actions:
+  - name: dance_pose_8
+    enable: true
+    start: [
+      0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    ]
+    end: [
+      0.52, 2.0, -1.662, 0.0, 0.0, 0.0,
+    ]
+    step: 0.07

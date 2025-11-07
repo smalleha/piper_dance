@@ -8,25 +8,24 @@ def main():
         print("❌ 请提供参数 x 的值")
         print("用法: python script.py <x>")
         sys.exit(1)
-    
+
     try:
         x = int(sys.argv[1])
     except ValueError:
         print("❌ 参数 x 必须是整数")
         sys.exit(1)
-    
+
     # 读取原始 YAML 文件
-    with open("/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/mamo/mamo_pose.yaml", "r", encoding="utf-8") as f:
+    input_file = "/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/mamo/mamo_pose_v2.yaml"
+    with open(input_file, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
-    # 顶层是字典，actions 列表在 data["actions"] 中
     actions = data["actions"]
     y = x + 1
-
     start_x = 6 * x
     start_y = 6 * y
 
-    # 遍历所有 actions，提取第7~12个值
+    # 提取新动作组
     new_actions = []
     for action in actions:
         new_action = {
@@ -34,39 +33,39 @@ def main():
             "enable": action["enable"],
             "start": action["start"][start_x:start_y],
             "end": action["end"][start_x:start_y],
-            "step": action["step"]
+            "step": action["step"],
         }
+        # ✅ 仅当存在 hold_time 时添加
+        if "hold_time" in action:
+            new_action["hold_time"] = action["hold_time"]
+
         new_actions.append(new_action)
 
-    # 构造新的字典，保持和原 YAML 顶层一致
-    new_data = {"actions": new_actions}
-
-    # 指定输出路径
-    output_dir = "/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/mamo/piper"
-    os.makedirs(output_dir, exist_ok=True)  # 确保目录存在
+    # 构造输出文件夹与路径
+    output_dir = "/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/mamo/piper_mamo_pose_v2"
+    os.makedirs(output_dir, exist_ok=True)
 
     filename = f"piper_{x+1}.yaml"
-    filepath = os.path.join(output_dir, filename)  # 完整的文件路径
+    filepath = os.path.join(output_dir, filename)
 
-    # 输出新的 YAML 文件
+    # 写出 YAML 文件（保持自定义格式）
     with open(filepath, "w", encoding="utf-8") as f:
-        # 先写入顶层结构
         f.write("actions:\n")
-        
-        # 为每个action单独处理格式
         for action in new_actions:
             f.write(f"  - name: {action['name']}\n")
             f.write(f"    enable: {str(action['enable']).lower()}\n")
-            
-            # 格式化 start 数组
-            start_str = ', '.join(str(x) for x in action['start'])
+
+            start_str = ', '.join(str(v) for v in action['start'])
             f.write(f"    start: [\n      {start_str},\n    ]\n")
-            
-            # 格式化 end 数组  
-            end_str = ', '.join(str(x) for x in action['end'])
+
+            end_str = ', '.join(str(v) for v in action['end'])
             f.write(f"    end: [\n      {end_str},\n    ]\n")
-            
+
             f.write(f"    step: {action['step']}\n")
+
+            # ✅ 仅当 hold_time 存在时写入
+            if "hold_time" in action:
+                f.write(f"    hold_time: {action['hold_time']}\n")
 
     print(f"✅ 生成文件: {filepath}")
 

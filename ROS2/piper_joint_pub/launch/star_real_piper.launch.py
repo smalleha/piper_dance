@@ -2,6 +2,7 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration
+from ament_index_python.packages import get_package_share_directory
 
 def generate_nodes(context):
     """动态生成多个 Piper 控制节点"""
@@ -9,6 +10,7 @@ def generate_nodes(context):
     auto_enable = LaunchConfiguration('auto_enable')
     gripper_exist = LaunchConfiguration('gripper_exist')
     gripper_val_mutiple = LaunchConfiguration('gripper_val_mutiple')
+    piper_dir = get_package_share_directory('piper')
 
     nodes = []
     for i in range(1, num_arms + 1):

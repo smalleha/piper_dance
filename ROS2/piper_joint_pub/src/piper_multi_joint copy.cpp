@@ -16,7 +16,6 @@ public:
         std::vector<double> start;
         std::vector<double> end;
         double step;
-        double hold_time;  // ✅ 新增字段
         std::vector<std::vector<double>> interpolated;
     };
 
@@ -28,8 +27,6 @@ public:
         size_t action_index = 0;
         size_t step_index = 0;
         double delay = 0.0;
-        rclcpp::Time hold_start_time;  // ✅ 用于计时 hold_time
-        bool holding = false;
     };
 
     JointSequencePublisher()
@@ -51,7 +48,7 @@ public:
         joint_names_ = {"joint1", "joint2", "joint3", "joint4",
                         "joint5", "joint6", "joint7", "joint8"};
 
-        // 加载每个机械臂配置
+        // 加载每个机械臂的配置
         for (int i = 1; i <= num_arms_; ++i)
         {
             std::ostringstream name_stream;
@@ -69,7 +66,7 @@ public:
             ArmController arm;
             arm.name = arm_name;
             arm.pub = this->create_publisher<sensor_msgs::msg::JointState>("/" + arm_name + "/joint_states", 10);
-            // arm.delay = delay_step_ * (i - 1);
+            arm.delay = delay_step_ * (i - 1);
 
             loadYAML(yaml_file, arm.actions);
             arms_.push_back(arm);
@@ -120,9 +117,7 @@ private:
             for (auto v : node["end"])
                 a.end.push_back(v.as<double>());
             a.step = node["step"].as<double>();
-            a.hold_time = node["hold_time"] ? node["hold_time"].as<double>() : 0.0; // ✅ 新增读取 hold_time
 
-            // 计算插值
             size_t n = a.start.size();
             size_t steps = 0;
             for (size_t i = 0; i < n; ++i)
@@ -162,29 +157,10 @@ private:
                 continue;
 
             all_done = false;
-
             if (elapsed < arm.delay)
                 continue;
 
-            auto &act = arm.actions[arm.action_index];
-
-            // ✅ 如果当前在 hold 阶段，判断是否可以结束 hold
-            if (arm.holding)
-            {
-                double hold_elapsed = (now - arm.hold_start_time).seconds();
-                if (hold_elapsed < act.hold_time)
-                    continue; // 还没 hold 完
-                else
-                {
-                    arm.holding = false; // 结束 hold
-                    arm.action_index++;
-                    arm.step_index = 0;
-                    RCLCPP_INFO(this->get_logger(), "▶️ [%s] hold finished, move to next action", arm.name.c_str());
-                    continue;
-                }
-            }
-
-            // 发布当前步
+            const auto &act = arm.actions[arm.action_index];
             sensor_msgs::msg::JointState msg;
             msg.header.stamp = now;
             msg.name = joint_names_;
@@ -192,24 +168,34 @@ private:
             arm.pub->publish(msg);
 
             arm.step_index++;
-
-            // ✅ 动作完成：进入 hold 状态
             if (arm.step_index >= act.interpolated.size())
             {
-                RCLCPP_INFO(this->get_logger(), "✅ [%s] finished [%s], hold %.2fs",
-                            arm.name.c_str(), act.name.c_str(), act.hold_time);
+                RCLCPP_INFO(this->get_logger(), "✅ [%s] finished [%s]", arm.name.c_str(), act.name.c_str());
 
-                if (act.hold_time > 0.0)
+                // 暂停逻辑
+                if (arm.name == "piper_1" && act.name == "final_rest")
                 {
-                    arm.holding = true;
-                    arm.hold_start_time = now;
-                    continue;
+                    all_paused_ = true;
+                    RCLCPP_WARN(this->get_logger(), "⏸ All paused after piper_1 finished final_rest");
                 }
-                else
+
+                // 恢复逻辑
+                if (arm.name == "piper_3" && act.name == "final_rest")
                 {
-                    arm.action_index++;
-                    arm.step_index = 0;
+                    all_resumed_ = true;
+                    all_paused_ = false;
+                    start_time_ = this->now();
+
+                    for (auto &a : arms_)
+                    {
+                        a.action_index = 0;
+                        a.step_index = 0;
+                    }
+                    RCLCPP_WARN(this->get_logger(), "🔁 All resumed after piper_3 finished final_rest");
                 }
+
+                arm.step_index = 0;
+                arm.action_index++;
             }
         }
 
