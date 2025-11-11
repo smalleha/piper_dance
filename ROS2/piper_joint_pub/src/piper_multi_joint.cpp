@@ -27,31 +27,26 @@ public:
         std::vector<Action> actions;
         size_t action_index = 0;
         size_t step_index = 0;
-        double delay = 0.0;
-        rclcpp::Time hold_start_time;  // ✅ 用于计时 hold_time
         bool holding = false;
+        rclcpp::Time hold_start_time;
+        rclcpp::TimerBase::SharedPtr timer;  // ✅ 独立定时器
     };
 
     JointSequencePublisher()
-        : Node("multi_joint_sequence_publisher"),
-          start_time_(this->now())
+        : Node("multi_joint_sequence_publisher")
     {
-        // 声明参数
+        // === 声明并读取参数 ===
         this->declare_parameter<int>("num_arms", 3);
         this->declare_parameter<std::string>("base_path", "/home/q/ros2_ws/src/piper_joint_pub/config/");
         this->declare_parameter<std::string>("arm_prefix", "piper_");
-        this->declare_parameter<double>("delay_step", 0.0);
 
-        // 获取参数
         this->get_parameter("num_arms", num_arms_);
         this->get_parameter("base_path", base_path_);
         this->get_parameter("arm_prefix", arm_prefix_);
-        this->get_parameter("delay_step", delay_step_);
 
-        joint_names_ = {"joint1", "joint2", "joint3", "joint4",
-                        "joint5", "joint6", "joint7", "joint8"};
+        joint_names_ = {"joint1", "joint2", "joint3", "joint4", "joint5", "joint6", "joint7"};
 
-        // 加载每个机械臂配置
+        // === 加载每个机械臂配置 ===
         for (int i = 1; i <= num_arms_; ++i)
         {
             std::ostringstream name_stream;
@@ -61,36 +56,30 @@ public:
             std::string yaml_file = base_path_ + arm_name + ".yaml";
             if (!std::filesystem::exists(yaml_file))
             {
-                RCLCPP_WARN(this->get_logger(), "⚠️ YAML file not found for %s, skipped: %s",
-                            arm_name.c_str(), yaml_file.c_str());
+                RCLCPP_WARN(this->get_logger(), "⚠️ YAML not found for %s, skipped: %s", arm_name.c_str(), yaml_file.c_str());
                 continue;
             }
 
             ArmController arm;
             arm.name = arm_name;
             arm.pub = this->create_publisher<sensor_msgs::msg::JointState>("/" + arm_name + "/joint_states", 10);
-            // arm.delay = delay_step_ * (i - 1);
 
             loadYAML(yaml_file, arm.actions);
-            arms_.push_back(arm);
 
-            RCLCPP_INFO(this->get_logger(), "✅ Loaded [%s], delay=%.1fs, actions=%zu",
-                        arm.name.c_str(), arm.delay, arm.actions.size());
+            // ✅ 每个机械臂创建独立定时器（20Hz）
+            arm.timer = this->create_wall_timer(
+                std::chrono::milliseconds(50),
+                [this, i]() { this->update_arm(i - 1); });
+
+            arms_.push_back(std::move(arm));
+            RCLCPP_INFO(this->get_logger(), "✅ Loaded [%s] actions=%zu", arm_name.c_str(), arms_.back().actions.size());
         }
 
-        RCLCPP_INFO(this->get_logger(), "🎯 Total arms loaded: %zu (configured: %d)",
-                    arms_.size(), num_arms_);
-
-        timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(50),
-            std::bind(&JointSequencePublisher::update, this));
+        RCLCPP_INFO(this->get_logger(), "🎯 Total arms loaded: %zu", arms_.size());
     }
 
 private:
-    // === 状态变量 ===
-    bool all_paused_ = false;
-    bool all_resumed_ = false;
-
+    // === 加载 YAML 动作 ===
     void loadYAML(const std::string &path, std::vector<Action> &actions)
     {
         YAML::Node config;
@@ -101,13 +90,12 @@ private:
         catch (const YAML::BadFile &e)
         {
             RCLCPP_ERROR(this->get_logger(), "❌ Failed to open YAML file: %s", path.c_str());
-            rclcpp::shutdown();
             return;
         }
 
         if (!config["actions"])
         {
-            RCLCPP_ERROR(this->get_logger(), "❌ No 'actions' field in YAML file: %s", path.c_str());
+            RCLCPP_ERROR(this->get_logger(), "❌ No 'actions' in %s", path.c_str());
             return;
         }
 
@@ -120,7 +108,7 @@ private:
             for (auto v : node["end"])
                 a.end.push_back(v.as<double>());
             a.step = node["step"].as<double>();
-            a.hold_time = node["hold_time"] ? node["hold_time"].as<double>() : 0.0; // ✅ 新增读取 hold_time
+            a.hold_time = node["hold_time"] ? node["hold_time"].as<double>() : 0.0;
 
             // 计算插值
             size_t n = a.start.size();
@@ -128,7 +116,7 @@ private:
             for (size_t i = 0; i < n; ++i)
             {
                 double diff = std::fabs(a.end[i] - a.start[i]);
-                steps = std::max(steps, static_cast<size_t>(diff / a.step));
+                steps = std::max(steps, static_cast<size_t>(diff / std::max(a.step, 1e-6)));
             }
 
             for (size_t s = 0; s <= steps; ++s)
@@ -146,97 +134,91 @@ private:
         }
     }
 
-    void update()
+    // === 每个机械臂独立 update 回调 ===
+    void update_arm(int index)
     {
-        auto now = this->now();
-        double elapsed = (now - start_time_).seconds();
-
-        if (all_paused_ && !all_resumed_)
+        if (index >= static_cast<int>(arms_.size()))
             return;
 
-        bool all_done = true;
+        auto &arm = arms_[index];
+        auto now = this->now();
 
-        for (auto &arm : arms_)
+        if (arm.action_index >= arm.actions.size())
+            return;
+
+        auto &act = arm.actions[arm.action_index];
+
+        // ✅ hold 阶段处理
+        if (arm.holding)
         {
-            if (arm.action_index >= arm.actions.size())
-                continue;
-
-            all_done = false;
-
-            if (elapsed < arm.delay)
-                continue;
-
-            auto &act = arm.actions[arm.action_index];
-
-            // ✅ 如果当前在 hold 阶段，判断是否可以结束 hold
-            if (arm.holding)
+            double hold_elapsed = (now - arm.hold_start_time).seconds();
+            if (hold_elapsed < act.hold_time)
+                return;
+            else
             {
-                double hold_elapsed = (now - arm.hold_start_time).seconds();
-                if (hold_elapsed < act.hold_time)
-                    continue; // 还没 hold 完
-                else
-                {
-                    arm.holding = false; // 结束 hold
-                    arm.action_index++;
-                    arm.step_index = 0;
-                    RCLCPP_INFO(this->get_logger(), "▶️ [%s] hold finished, move to next action", arm.name.c_str());
-                    continue;
-                }
+                arm.holding = false;
+                arm.action_index++;
+                arm.step_index = 0;
+                RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000,
+                                     "[%s] Hold done, next action (%zu/%zu)",
+                                     arm.name.c_str(), arm.action_index, arm.actions.size());
+                return;
             }
+        }
 
-            // 发布当前步
+        // 发布当前步
+        if (arm.step_index < act.interpolated.size())
+        {
             sensor_msgs::msg::JointState msg;
             msg.header.stamp = now;
             msg.name = joint_names_;
             msg.position = act.interpolated[arm.step_index];
             arm.pub->publish(msg);
-
             arm.step_index++;
-
-            // ✅ 动作完成：进入 hold 状态
-            if (arm.step_index >= act.interpolated.size())
-            {
-                RCLCPP_INFO(this->get_logger(), "✅ [%s] finished [%s], hold %.2fs",
-                            arm.name.c_str(), act.name.c_str(), act.hold_time);
-
-                if (act.hold_time > 0.0)
-                {
-                    arm.holding = true;
-                    arm.hold_start_time = now;
-                    continue;
-                }
-                else
-                {
-                    arm.action_index++;
-                    arm.step_index = 0;
-                }
-            }
         }
 
-        if (all_done && !all_paused_)
+        // ✅ 动作完成，进入 hold
+        if (arm.step_index >= act.interpolated.size())
         {
-            RCLCPP_INFO(this->get_logger(), "🎉 All arms finished all actions, shutting down.");
-            rclcpp::shutdown();
+            if (act.hold_time > 0.0)
+            {
+                arm.holding = true;
+                arm.hold_start_time = now;
+                RCLCPP_INFO(this->get_logger(), "✅ [%s] finished [%s], holding %.2fs",
+                            arm.name.c_str(), act.name.c_str(), act.hold_time);
+            }
+            else
+            {
+                arm.action_index++;
+                arm.step_index = 0;
+            }
+
+            // 所有动作完成后打印提示
+            if (arm.action_index >= arm.actions.size())
+            {
+                RCLCPP_INFO(this->get_logger(), "🎉 [%s] all actions finished.", arm.name.c_str());
+            }
         }
     }
 
     // === 成员变量 ===
-    rclcpp::TimerBase::SharedPtr timer_;
-    rclcpp::Time start_time_;
-    std::vector<std::string> joint_names_;
-    std::vector<ArmController> arms_;
-
     int num_arms_;
     std::string base_path_;
     std::string arm_prefix_;
-    double delay_step_;
+    std::vector<std::string> joint_names_;
+    std::vector<ArmController> arms_;
 };
 
 int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
     auto node = std::make_shared<JointSequencePublisher>();
-    rclcpp::spin(node);
+
+    // ✅ 多线程执行器：保证每个机械臂独立执行
+    rclcpp::executors::MultiThreadedExecutor executor;
+    executor.add_node(node);
+    executor.spin();
+
     rclcpp::shutdown();
     return 0;
 }
