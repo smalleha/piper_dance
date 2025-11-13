@@ -36,6 +36,16 @@ ament_target_dependencies(piper_joint_pub_tenth rclcpp sensor_msgs)
 target_link_libraries(piper_joint_pub_tenth yaml-cpp)
 install(TARGETS piper_joint_pub_tenth DESTINATION lib/${PROJECT_NAME})
 
+add_executable(piper_multi_joint_delay src/piper_multi_joint_delay.cpp)
+ament_target_dependencies(piper_multi_joint_delay rclcpp sensor_msgs)
+target_link_libraries(piper_multi_joint_delay yaml-cpp)
+install(TARGETS piper_multi_joint_delay DESTINATION lib/${PROJECT_NAME})
+
+add_executable(piper_multi_joint_user src/piper_multi_joint_user.cpp)
+ament_target_dependencies(piper_multi_joint_user rclcpp sensor_msgs)
+target_link_libraries(piper_multi_joint_user yaml-cpp)
+install(TARGETS piper_multi_joint_user DESTINATION lib/${PROJECT_NAME})
+
 
 install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME}/)
 
