@@ -6,6 +6,7 @@
 #include <cmath>
 #include <sstream>
 #include <filesystem>
+#include <mutex>
 
 class JointSequencePublisher : public rclcpp::Node
 {
@@ -16,7 +17,8 @@ public:
         std::vector<double> start;
         std::vector<double> end;
         double step;
-        double hold_time;  // ✅ 新增字段
+        double hold_time;
+        bool together;  // ✅ 新增字段
         std::vector<std::vector<double>> interpolated;
     };
 
@@ -28,14 +30,14 @@ public:
         size_t action_index = 0;
         size_t step_index = 0;
         bool holding = false;
+        bool waiting_sync = false;  // ✅ 新字段：等待同步
         rclcpp::Time hold_start_time;
-        rclcpp::TimerBase::SharedPtr timer;  // ✅ 独立定时器
+        rclcpp::TimerBase::SharedPtr timer;
     };
 
     JointSequencePublisher()
-        : Node("multi_joint_sequence_publisher")
+        : Node("multi_joint_sequence_publisher"), sync_active_(false)
     {
-        // === 声明并读取参数 ===
         this->declare_parameter<int>("num_arms", 3);
         this->declare_parameter<std::string>("base_path", "/home/q/ros2_ws/src/piper_joint_pub/config/");
         this->declare_parameter<std::string>("arm_prefix", "piper_");
@@ -46,7 +48,6 @@ public:
 
         joint_names_ = {"joint1", "joint2", "joint3", "joint4", "joint5", "joint6", "joint7"};
 
-        // === 加载每个机械臂配置 ===
         for (int i = 1; i <= num_arms_; ++i)
         {
             std::ostringstream name_stream;
@@ -63,12 +64,10 @@ public:
             ArmController arm;
             arm.name = arm_name;
             arm.pub = this->create_publisher<sensor_msgs::msg::JointState>("/" + arm_name + "/joint_states", 10);
-
             loadYAML(yaml_file, arm.actions);
 
-            // ✅ 每个机械臂创建独立定时器（20Hz）
             arm.timer = this->create_wall_timer(
-                std::chrono::milliseconds(50),
+                std::chrono::milliseconds(20),
                 [this, i]() { this->update_arm(i - 1); });
 
             arms_.push_back(std::move(arm));
@@ -79,7 +78,9 @@ public:
     }
 
 private:
-    // === 加载 YAML 动作 ===
+    std::mutex sync_mutex_;
+    bool sync_active_; // ✅ 同步标志
+
     void loadYAML(const std::string &path, std::vector<Action> &actions)
     {
         YAML::Node config;
@@ -109,8 +110,8 @@ private:
                 a.end.push_back(v.as<double>());
             a.step = node["step"].as<double>();
             a.hold_time = node["hold_time"] ? node["hold_time"].as<double>() : 0.0;
+            a.together = node["together"] ? node["together"].as<bool>() : false; // ✅ 新增解析
 
-            // 计算插值
             size_t n = a.start.size();
             size_t steps = 0;
             for (size_t i = 0; i < n; ++i)
@@ -134,7 +135,6 @@ private:
         }
     }
 
-    // === 每个机械臂独立 update 回调 ===
     void update_arm(int index)
     {
         if (index >= static_cast<int>(arms_.size()))
@@ -148,25 +148,44 @@ private:
 
         auto &act = arm.actions[arm.action_index];
 
-        // ✅ hold 阶段处理
-        if (arm.holding)
+        // ✅ 如果together模式，等待其他机械臂准备好
+        if (act.together)
         {
-            double hold_elapsed = (now - arm.hold_start_time).seconds();
-            if (hold_elapsed < act.hold_time)
-                return;
-            else
+            std::lock_guard<std::mutex> lock(sync_mutex_);
+
+            // 如果同步还没开始，标记等待
+            if (!sync_active_ && !arm.waiting_sync)
             {
-                arm.holding = false;
-                arm.action_index++;
-                arm.step_index = 0;
-                RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000,
-                                     "[%s] Hold done, next action (%zu/%zu)",
-                                     arm.name.c_str(), arm.action_index, arm.actions.size());
+                arm.waiting_sync = true;
+
+                // 检查是否所有机械臂都在together状态
+                bool all_ready = true;
+                for (auto &a : arms_)
+                {
+                    if (a.action_index >= a.actions.size())
+                        continue;
+                    if (!a.actions[a.action_index].together)
+                        all_ready = false;
+                    if (!a.waiting_sync)
+                        all_ready = false;
+                }
+
+                if (all_ready)
+                {
+                    sync_active_ = true;
+                    for (auto &a : arms_)
+                        a.waiting_sync = false;
+                    RCLCPP_INFO(this->get_logger(), "🚀 Together mode: all arms start synchronized action!");
+                }
                 return;
             }
+
+            // 等待同步信号
+            if (!sync_active_)
+                return;
         }
 
-        // 发布当前步
+        // ✅ 动作执行逻辑
         if (arm.step_index < act.interpolated.size())
         {
             sensor_msgs::msg::JointState msg;
@@ -176,16 +195,24 @@ private:
             arm.pub->publish(msg);
             arm.step_index++;
         }
-
-        // ✅ 动作完成，进入 hold
-        if (arm.step_index >= act.interpolated.size())
+        else
         {
-            if (act.hold_time > 0.0)
+            // ✅ 如果是together动作，忽略hold_time
+            if (!act.together && act.hold_time > 0.0)
             {
-                arm.holding = true;
-                arm.hold_start_time = now;
-                RCLCPP_INFO(this->get_logger(), "✅ [%s] finished [%s], holding %.2fs",
-                            arm.name.c_str(), act.name.c_str(), act.hold_time);
+                if (!arm.holding)
+                {
+                    arm.holding = true;
+                    arm.hold_start_time = now;
+                    RCLCPP_INFO(this->get_logger(), "[%s] finished [%s], holding %.2fs",
+                                arm.name.c_str(), act.name.c_str(), act.hold_time);
+                }
+                else if ((now - arm.hold_start_time).seconds() >= act.hold_time)
+                {
+                    arm.holding = false;
+                    arm.action_index++;
+                    arm.step_index = 0;
+                }
             }
             else
             {
@@ -193,15 +220,28 @@ private:
                 arm.step_index = 0;
             }
 
-            // 所有动作完成后打印提示
-            if (arm.action_index >= arm.actions.size())
+            // ✅ 如果所有机械臂都完成together动作，则结束同步状态
+            if (act.together)
             {
-                RCLCPP_INFO(this->get_logger(), "🎉 [%s] all actions finished.", arm.name.c_str());
+                std::lock_guard<std::mutex> lock(sync_mutex_);
+                bool all_done = true;
+                for (auto &a : arms_)
+                {
+                    if (a.action_index < a.actions.size() && a.actions[a.action_index].together)
+                        all_done = false;
+                }
+                if (all_done)
+                {
+                    sync_active_ = false;
+                    RCLCPP_INFO(this->get_logger(), "🎯 Together mode finished, returning to independent mode.");
+                }
             }
+
+            if (arm.action_index >= arm.actions.size())
+                RCLCPP_INFO(this->get_logger(), "🎉 [%s] all actions finished.", arm.name.c_str());
         }
     }
 
-    // === 成员变量 ===
     int num_arms_;
     std::string base_path_;
     std::string arm_prefix_;
@@ -214,7 +254,6 @@ int main(int argc, char **argv)
     rclcpp::init(argc, argv);
     auto node = std::make_shared<JointSequencePublisher>();
 
-    // ✅ 多线程执行器：保证每个机械臂独立执行
     rclcpp::executors::MultiThreadedExecutor executor;
     executor.add_node(node);
     executor.spin();
@@ -222,3 +261,4 @@ int main(int argc, char **argv)
     rclcpp::shutdown();
     return 0;
 }
+
