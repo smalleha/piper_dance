@@ -15,7 +15,7 @@ def generate_nodes(context):
     nodes = []
     for i in range(1, num_arms + 1):
         ns = f'piper_{i}'
-        can_port = f'can{i}'  # 从 can1 开始
+        can_port = f'piper_{i}'  # 从 can1 开始
         node = Node(
             package='piper',
             executable='piper_single_ctrl',
@@ -40,7 +40,7 @@ def generate_launch_description():
     # ---- Launch 参数定义 ----
     num_arms_arg = DeclareLaunchArgument(
         'num_arms',
-        default_value='4',
+        default_value='7',
         description='Number of Piper arms to launch (starting from can1).'
     )
     auto_enable_arg = DeclareLaunchArgument(
