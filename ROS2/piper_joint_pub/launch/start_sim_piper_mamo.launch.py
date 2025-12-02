@@ -6,13 +6,9 @@ def generate_launch_description():
         # === 多机械臂关节控制节点 ===
         Node(
             package='piper_joint_pub',
-            executable='piper_multi_joint',
-            name='piper_multi_joint',
+            executable='piper_joint_pub_tenth',
+            name='piper_joint_pub_tenth',
             output='screen',
-            parameters=[
-                {'num_arms': 10},
-                {'base_path': '/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/mamo/piper_mamo_pose_v2/'},
-            ]
         ),
 
         # Node(

@@ -21,7 +21,7 @@ public:
         // 发布 hand_cmd
         hand_publisher_ = this->create_publisher<std_msgs::msg::String>("/hand_cmd", 10);
 
-        std::string yaml_path = "/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/mamo/mamo_pose_v2.yaml";
+        std::string yaml_path = "/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/mamo/mamo_pose_v2_back.yaml";
         load_yaml(yaml_path);
 
         // === 初始化 10个机械臂的60个关节 ===
@@ -33,7 +33,7 @@ public:
             }
         }
 
-        RCLCPP_INFO(this->get_logger(), "✅ Node started, loaded %zu actions from %s", actions_.size(), yaml_path.c_str());
+        RCLCPP_INFO(this->get_logger(), " Node started, loaded %zu actions from %s", actions_.size(), yaml_path.c_str());
 
         execute_actions_once();
     }
@@ -47,7 +47,7 @@ private:
         std::vector<double> end;
         double step;
         double hold_time;
-        std::string hand_cmd; // ✅ 新增字段
+        std::string hand_cmd; // 新增字段
         std::vector<std::vector<double>> interpolated;
     };
 
@@ -56,7 +56,7 @@ private:
         YAML::Node config = YAML::LoadFile(path);
         if (!config["actions"])
         {
-            RCLCPP_ERROR(this->get_logger(), "❌ No 'actions' field in YAML file: %s", path.c_str());
+            RCLCPP_ERROR(this->get_logger(), "No 'actions' field in YAML file: %s", path.c_str());
             return;
         }
 
@@ -68,7 +68,7 @@ private:
             a.step = node["step"].as<double>();
             a.hold_time = node["hold_time"] ? node["hold_time"].as<double>() : 0.0;
 
-            // ✅ 新增：读取 hand_cmd 参数（可选）
+            // 新增：读取 hand_cmd 参数（可选）
             if (node["hand_cmd"])
                 a.hand_cmd = node["hand_cmd"].as<std::string>();
             else
@@ -82,7 +82,7 @@ private:
             if (!a.enable)
             {
                 actions_.push_back(a);
-                RCLCPP_WARN(this->get_logger(), "⚠️ Skipping disabled action [%s]", a.name.c_str());
+                RCLCPP_WARN(this->get_logger(), "Skipping disabled action [%s]", a.name.c_str());
                 continue;
             }
 
@@ -108,7 +108,7 @@ private:
 
             actions_.push_back(a);
             RCLCPP_INFO(this->get_logger(),
-                        "✅ Loaded action [%s] (%s) with %zu steps, hold_time=%.2f, hand_cmd=%s",
+                        "Loaded action [%s] (%s) with %zu steps, hold_time=%.2f, hand_cmd=%s",
                         a.name.c_str(), a.enable ? "enabled" : "disabled", a.interpolated.size(),
                         a.hold_time, a.hand_cmd.empty() ? "none" : a.hand_cmd.c_str());
         }
@@ -126,15 +126,15 @@ private:
             if (!a.enable)
                 continue;
 
-            RCLCPP_INFO(this->get_logger(), "▶ Executing action [%s]...", a.name.c_str());
+            RCLCPP_INFO(this->get_logger(), "Executing action [%s]...", a.name.c_str());
 
-            // ✅ 若存在 hand_cmd，则发送
+            // 若存在 hand_cmd，则发送
             if (!a.hand_cmd.empty())
             {
                 std_msgs::msg::String cmd_msg;
                 cmd_msg.data = a.hand_cmd;
                 hand_publisher_->publish(cmd_msg);
-                RCLCPP_INFO(this->get_logger(), "🖐 Sent hand_cmd: %s", a.hand_cmd.c_str());
+                RCLCPP_INFO(this->get_logger(), "Sent hand_cmd: %s", a.hand_cmd.c_str());
             }
 
             // === 播放插值动作 ===
@@ -148,12 +148,12 @@ private:
 
             if (a.hold_time > 0)
             {
-                RCLCPP_INFO(this->get_logger(), "⏸ Holding final pose for %.1f sec", a.hold_time);
+                RCLCPP_INFO(this->get_logger(), "Holding final pose for %.1f sec", a.hold_time);
                 std::this_thread::sleep_for(std::chrono::duration<double>(a.hold_time));
             }
         }
 
-        RCLCPP_INFO(this->get_logger(), "🎉 All actions completed. Exiting...");
+        RCLCPP_INFO(this->get_logger(), "All actions completed. Exiting...");
         rclcpp::shutdown();
     }
 

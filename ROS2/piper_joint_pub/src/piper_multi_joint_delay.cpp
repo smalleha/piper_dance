@@ -34,10 +34,10 @@ public:
           start_time_(this->now())
     {
         // 声明参数
-        this->declare_parameter<int>("num_arms", 7);
-        this->declare_parameter<std::string>("base_path", "/home/agilex/piper_ws/src/ROS2/piper_joint_pub/config/piper/wave_v2/");
+        this->declare_parameter<int>("num_arms", 3);
+        this->declare_parameter<std::string>("base_path", "/home/q/ros2_ws/src/piper_joint_pub/config/");
         this->declare_parameter<std::string>("arm_prefix", "piper_");
-        this->declare_parameter<double>("delay_step", 0.3);
+        this->declare_parameter<double>("delay_step", 0.0);
 
         // 获取参数
         this->get_parameter("num_arms", num_arms_);
@@ -46,7 +46,7 @@ public:
         this->get_parameter("delay_step", delay_step_);
 
         joint_names_ = {"joint1", "joint2", "joint3", "joint4",
-                        "joint5", "joint6", "joint7"};
+                        "joint5", "joint6", "joint7", "joint8"};
 
         // 加载每个机械臂的配置
         for (int i = 1; i <= num_arms_; ++i)

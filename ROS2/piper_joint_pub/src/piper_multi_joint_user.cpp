@@ -20,8 +20,6 @@ public:
         double step;
         double hold_time;
         double delay_time;
-        bool together;
-        std::string hand_cmd;
 
         std::vector<std::vector<double>> interpolated;
     };
@@ -64,7 +62,7 @@ public:
             std::string yaml_file = base_path_ + arm_name + ".yaml";
             if (!std::filesystem::exists(yaml_file))
             {
-                RCLCPP_WARN(this->get_logger(), "⚠️ YAML not found for %s, skipped: %s",
+                RCLCPP_WARN(this->get_logger(), "YAML not found for %s, skipped: %s",
                             arm_name.c_str(), yaml_file.c_str());
                 continue;
             }
@@ -81,11 +79,11 @@ public:
                 [this, i]() { this->update_arm(i - 1); });
 
             arms_.push_back(std::move(arm));
-            RCLCPP_INFO(this->get_logger(), "✅ Loaded [%s] actions=%zu",
+            RCLCPP_INFO(this->get_logger(), "Loaded [%s] actions=%zu",
                         arm_name.c_str(), arms_.back().actions.size());
         }
 
-        RCLCPP_INFO(this->get_logger(), "🎯 Total arms loaded: %zu", arms_.size());
+        RCLCPP_INFO(this->get_logger(), "Total arms loaded: %zu", arms_.size());
     }
 
 private:
@@ -101,13 +99,13 @@ private:
         }
         catch (const YAML::BadFile &e)
         {
-            RCLCPP_ERROR(this->get_logger(), "❌ Failed to open YAML file: %s", path.c_str());
+            RCLCPP_ERROR(this->get_logger(), "Failed to open YAML file: %s", path.c_str());
             return;
         }
 
         if (!config["actions"])
         {
-            RCLCPP_ERROR(this->get_logger(), "❌ No 'actions' in %s", path.c_str());
+            RCLCPP_ERROR(this->get_logger(), "No 'actions' in %s", path.c_str());
             return;
         }
 
@@ -120,9 +118,6 @@ private:
             a.step = node["step"].as<double>();
             a.hold_time = node["hold_time"] ? node["hold_time"].as<double>() : 0.0;
             a.delay_time = node["delay_time"] ? node["delay_time"].as<double>() : 0.0;
-            a.together = node["together"] ? node["together"].as<bool>() : false;
-            a.hand_cmd = node["hand_cmd"] ? node["hand_cmd"].as<std::string>() : "";
-
             size_t n = a.start.size();
 
             size_t steps = 0;
@@ -160,17 +155,22 @@ private:
                 }
 
                 if (!has_nan)
-                    filtered.push_back(vec);
+                    {
+                        filtered.push_back(vec);
+                    }
                 else
-                    RCLCPP_WARN(this->get_logger(),
-                                "⚠️ [%s] 插补中出现 NaN，已过滤该关键帧", a.name.c_str());
+                {RCLCPP_WARN(this->get_logger(),
+                                "[%s] 插补中出现 NaN，已过滤该关键帧", a.name.c_str());}
             }
 
             if (filtered.empty())
             {
                 RCLCPP_ERROR(this->get_logger(),
-                             "❌ [%s] 插补之后全部为 NaN，动作将被跳过！", a.name.c_str());
-                continue; // 不加入动作
+                            "[%s] 插补之后全部为 NaN，使用 start 姿态保持当前动作。", 
+                            a.name.c_str());
+
+                // 使用 start 保持动作（不移动）
+                filtered.push_back(a.start);
             }
 
             a.interpolated = filtered;
@@ -190,40 +190,6 @@ private:
             return;
 
         auto &act = arm.actions[arm.action_index];
-
-        // --------------------- 同步机制 together ---------------------
-        if (act.together)
-        {
-            std::lock_guard<std::mutex> lock(sync_mutex_);
-            if (!sync_active_ && !arm.waiting_sync)
-            {
-                arm.waiting_sync = true;
-
-                bool all_ready = true;
-                for (auto &a : arms_)
-                {
-                    if (a.action_index >= a.actions.size())
-                        continue;
-                    if (!a.actions[a.action_index].together)
-                        all_ready = false;
-                    if (!a.waiting_sync)
-                        all_ready = false;
-                }
-
-                if (all_ready)
-                {
-                    sync_active_ = true;
-                    for (auto &a : arms_)
-                        a.waiting_sync = false;
-
-                    RCLCPP_INFO(this->get_logger(), "🚀 Together mode start!");
-                }
-                return;
-            }
-
-            if (!sync_active_)
-                return;
-        }
 
         // --------------------- 延迟 delay_time ---------------------
         if (act.delay_time > 0.0 && !arm.delaying && arm.step_index == 0)
@@ -255,18 +221,8 @@ private:
         }
         else
         {
-            // --------------------- 发布 hand_cmd ---------------------
-            if (!act.hand_cmd.empty())
-            {
-                std_msgs::msg::String hand_msg;
-                hand_msg.data = act.hand_cmd;
-                arm.hand_publisher_->publish(hand_msg);
-                RCLCPP_INFO(this->get_logger(), "[%s] Published hand_cmd: %s",
-                            arm.name.c_str(), act.hand_cmd.c_str());
-            }
-
             // --------------------- hold_time ---------------------
-            if (!act.together && act.hold_time > 0.0)
+            if (act.hold_time > 0.0)
             {
                 if (!arm.holding)
                 {
@@ -288,28 +244,8 @@ private:
                 arm.step_index = 0;
             }
 
-            // --------------------- together 动作结束判断 ---------------------
-            if (act.together)
-            {
-                std::lock_guard<std::mutex> lock(sync_mutex_);
-                bool all_done = true;
-
-                for (auto &a : arms_)
-                {
-                    if (a.action_index < a.actions.size() &&
-                        a.actions[a.action_index].together)
-                        all_done = false;
-                }
-
-                if (all_done)
-                {
-                    sync_active_ = false;
-                    RCLCPP_INFO(this->get_logger(), "🎯 Together mode finished.");
-                }
-            }
-
             if (arm.action_index >= arm.actions.size())
-                RCLCPP_INFO(this->get_logger(), "🎉 [%s] all actions finished.", arm.name.c_str());
+                RCLCPP_INFO(this->get_logger(), "[%s] all actions finished.", arm.name.c_str());
         }
     }
 

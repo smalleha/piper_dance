@@ -21,9 +21,8 @@ public:
         // 发布 hand_cmd
         hand_publisher_ = this->create_publisher<std_msgs::msg::String>("/hand_cmd", 10);
 
-        std::string yaml_path = "/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/dance_pose_v1.yaml";
+        std::string yaml_path = "/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/wave_pose.yaml";
         load_yaml(yaml_path);
-
 
         // === 初始化 18个机械臂的108个关节 ===
         for (int i = 1; i <= 18; ++i)

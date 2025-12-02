@@ -42,4 +42,4 @@ def add_zero_to_arrays(yaml_file):
 
 # 使用示例
 if __name__ == "__main__":
-    add_zero_to_arrays("/home/agilex/piper_ws/src/ROS2/piper_joint_pub/config/wave_pose.yaml")
+    add_zero_to_arrays("/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/dance_pose_v2.yaml")

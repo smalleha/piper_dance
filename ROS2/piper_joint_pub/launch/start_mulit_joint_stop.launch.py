@@ -9,8 +9,8 @@ def generate_launch_description():
             name='piper_multi_joint',
             output='screen',
             parameters=[
-                {'num_arms': 7},
-                {'base_path': '/home/agilex/piper_ws/src/ROS2/piper_joint_pub/config/piper/test/'},
+                {'num_arms': 3},
+                {'base_path': '/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/piper/test/'},
             ]
         )
     ])

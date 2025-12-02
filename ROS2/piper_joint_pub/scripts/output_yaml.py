@@ -16,14 +16,14 @@ def main():
         sys.exit(1)
 
     # 读取原始 YAML 文件
-    input_file = "/home/agilex/piper_ws/src/ROS2/piper_joint_pub/config/wave_pose.yaml"
+    input_file = "/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/dance_pose_v2.yaml"
     with open(input_file, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
     actions = data["actions"]
     y = x + 1
-    start_x = 7 * x
-    start_y = 7 * y
+    start_x = 6 * x
+    start_y = 6 * y
 
     # 提取新动作组
     new_actions = []
@@ -42,7 +42,7 @@ def main():
         new_actions.append(new_action)
 
     # 构造输出文件夹与路径
-    output_dir = "/home/agilex/piper_ws/src/ROS2/piper_joint_pub/config/piper/test/"
+    output_dir = "/home/agilex/ros2_project/piper_dancer_ws/src/piper_joint_pub/config/piper/dance_pose_v2/"
     os.makedirs(output_dir, exist_ok=True)
 
     filename = f"piper_{x+1}.yaml"

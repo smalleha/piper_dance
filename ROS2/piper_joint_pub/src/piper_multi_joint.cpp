@@ -18,7 +18,7 @@ public:
         std::vector<double> end;
         double step;
         double hold_time;
-        bool together;  // ✅ 新增字段
+        bool together;  
         std::vector<std::vector<double>> interpolated;
     };
 
@@ -30,7 +30,7 @@ public:
         size_t action_index = 0;
         size_t step_index = 0;
         bool holding = false;
-        bool waiting_sync = false;  // ✅ 新字段：等待同步
+        bool waiting_sync = false;  
         rclcpp::Time hold_start_time;
         rclcpp::TimerBase::SharedPtr timer;
     };
@@ -57,7 +57,7 @@ public:
             std::string yaml_file = base_path_ + arm_name + ".yaml";
             if (!std::filesystem::exists(yaml_file))
             {
-                RCLCPP_WARN(this->get_logger(), "⚠️ YAML not found for %s, skipped: %s", arm_name.c_str(), yaml_file.c_str());
+                RCLCPP_WARN(this->get_logger(), "YAML not found for %s, skipped: %s", arm_name.c_str(), yaml_file.c_str());
                 continue;
             }
 
@@ -71,15 +71,15 @@ public:
                 [this, i]() { this->update_arm(i - 1); });
 
             arms_.push_back(std::move(arm));
-            RCLCPP_INFO(this->get_logger(), "✅ Loaded [%s] actions=%zu", arm_name.c_str(), arms_.back().actions.size());
+            RCLCPP_INFO(this->get_logger(), "Loaded [%s] actions=%zu", arm_name.c_str(), arms_.back().actions.size());
         }
 
-        RCLCPP_INFO(this->get_logger(), "🎯 Total arms loaded: %zu", arms_.size());
+        RCLCPP_INFO(this->get_logger(), "Total arms loaded: %zu", arms_.size());
     }
 
 private:
     std::mutex sync_mutex_;
-    bool sync_active_; // ✅ 同步标志
+    bool sync_active_; 
 
     void loadYAML(const std::string &path, std::vector<Action> &actions)
     {
@@ -90,13 +90,13 @@ private:
         }
         catch (const YAML::BadFile &e)
         {
-            RCLCPP_ERROR(this->get_logger(), "❌ Failed to open YAML file: %s", path.c_str());
+            RCLCPP_ERROR(this->get_logger(), "Failed to open YAML file: %s", path.c_str());
             return;
         }
 
         if (!config["actions"])
         {
-            RCLCPP_ERROR(this->get_logger(), "❌ No 'actions' in %s", path.c_str());
+            RCLCPP_ERROR(this->get_logger(), "No 'actions' in %s", path.c_str());
             return;
         }
 
@@ -110,7 +110,7 @@ private:
                 a.end.push_back(v.as<double>());
             a.step = node["step"].as<double>();
             a.hold_time = node["hold_time"] ? node["hold_time"].as<double>() : 0.0;
-            a.together = node["together"] ? node["together"].as<bool>() : false; // ✅ 新增解析
+            a.together = node["together"] ? node["together"].as<bool>() : false; 
 
             size_t n = a.start.size();
             size_t steps = 0;
@@ -148,7 +148,6 @@ private:
 
         auto &act = arm.actions[arm.action_index];
 
-        // ✅ 如果together模式，等待其他机械臂准备好
         if (act.together)
         {
             std::lock_guard<std::mutex> lock(sync_mutex_);
@@ -175,7 +174,7 @@ private:
                     sync_active_ = true;
                     for (auto &a : arms_)
                         a.waiting_sync = false;
-                    RCLCPP_INFO(this->get_logger(), "🚀 Together mode: all arms start synchronized action!");
+                    RCLCPP_INFO(this->get_logger(), "Together mode: all arms start synchronized action!");
                 }
                 return;
             }
@@ -185,7 +184,6 @@ private:
                 return;
         }
 
-        // ✅ 动作执行逻辑
         if (arm.step_index < act.interpolated.size())
         {
             sensor_msgs::msg::JointState msg;
@@ -197,7 +195,7 @@ private:
         }
         else
         {
-            // ✅ 如果是together动作，忽略hold_time
+            // 如果是together动作，忽略hold_time
             if (!act.together && act.hold_time > 0.0)
             {
                 if (!arm.holding)
@@ -220,7 +218,7 @@ private:
                 arm.step_index = 0;
             }
 
-            // ✅ 如果所有机械臂都完成together动作，则结束同步状态
+            // 如果所有机械臂都完成together动作，则结束同步状态
             if (act.together)
             {
                 std::lock_guard<std::mutex> lock(sync_mutex_);
@@ -233,12 +231,12 @@ private:
                 if (all_done)
                 {
                     sync_active_ = false;
-                    RCLCPP_INFO(this->get_logger(), "🎯 Together mode finished, returning to independent mode.");
+                    RCLCPP_INFO(this->get_logger(), "Together mode finished, returning to independent mode.");
                 }
             }
 
             if (arm.action_index >= arm.actions.size())
-                RCLCPP_INFO(this->get_logger(), "🎉 [%s] all actions finished.", arm.name.c_str());
+                RCLCPP_INFO(this->get_logger(), "[%s] all actions finished.", arm.name.c_str());
         }
     }
 
