@@ -10,7 +10,7 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
     urdf_tutorial_path = get_package_share_path('dual_piper_v2')
-    default_model_path = urdf_tutorial_path / 'urdf/piper_fl_mamo.urdf'
+    default_model_path = urdf_tutorial_path / 'urdf/piper_hand.urdf'
     default_rviz_config_path = urdf_tutorial_path / 'rviz/rviz.rviz'
 
     gui_arg = DeclareLaunchArgument(name='gui', default_value='true', choices=['true', 'false'],

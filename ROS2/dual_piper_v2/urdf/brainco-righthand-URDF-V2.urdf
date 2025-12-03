@@ -2,10 +2,11 @@
 <!-- This  was automatically created by SolidWorks to  Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw__exporter -->
-<robot
-  name="brainco-righthand-URDF-V2">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="brainco-righthand-URDF-V2">
+    <xacro:macro name="left" params="namespace">
+
   <link
-    name="right_base_link">
+    name="${namespace}/right_base_link">
     <inertial>
       <origin
         xyz="-0.00477210157415217 -0.0014368255627066 0.0505186815078315"
@@ -45,7 +46,7 @@
     </collision>
   </link>
   <link
-    name="right_thumb_metacarpal_link">
+    name="${namespace}/right_thumb_metacarpal_link">
     <inertial>
       <origin
         xyz="-1.51105893291953E-05 0.00707242532016975 0.00420847293427094"
@@ -85,15 +86,15 @@
     </collision>
   </link>
   <joint
-    name="right_thumb_metacarpal_joint"
+    name="${namespace}/right_thumb_metacarpal_joint"
     type="fixed">
     <origin
       xyz="0.005619 0.019867 0.027825"
       rpy="3.1416 0 2.9637" />
     <parent
-      link="right_base_link" />
+      link="${namespace}/right_base_link" />
     <child
-      link="right_thumb_metacarpal_link" />
+      link="${namespace}/right_thumb_metacarpal_link" />
     <axis
       xyz="0 0 1" />
     <limit
@@ -103,7 +104,7 @@
       velocity="2.6175" />
   </joint>
   <link
-    name="right_thumb_proximal_link">
+    name="${namespace}/right_thumb_proximal_link">
     <inertial>
       <origin
         xyz="-4.57221370792071E-07 0.0250090111157988 -0.0017504940716868"
@@ -143,15 +144,15 @@
     </collision>
   </link>
   <joint
-    name="right_thumb_proximal_joint"
+    name="${namespace}/right_thumb_proximal_joint"
     type="fixed">
     <origin
       xyz="0 0.014227 0"
       rpy="-2.9667 -0.23736 2.9737" />
     <parent
-      link="right_thumb_metacarpal_link" />
+      link="${namespace}/right_thumb_metacarpal_link" />
     <child
-      link="right_thumb_proximal_link" />
+      link="${namespace}/right_thumb_proximal_link" />
     <axis
       xyz="1 0 0" />
     <limit
@@ -161,7 +162,7 @@
       velocity="2.5303" />
   </joint>
   <link
-    name="right_thumb_distal_link">
+    name="${namespace}/right_thumb_distal_link">
     <inertial>
       <origin
         xyz="-5.88258313588552E-09 0.0117544716247142 1.13324397438969E-05"
@@ -201,15 +202,15 @@
     </collision>
   </link>
   <joint
-    name="right_thumb_distal_joint"
+    name="${namespace}/right_thumb_distal_joint"
     type="fixed">
     <origin
       xyz="0 0.052 0"
       rpy="0 0 0" />
     <parent
-      link="right_thumb_proximal_link" />
+      link="${namespace}/right_thumb_proximal_link" />
     <child
-      link="right_thumb_distal_link" />
+      link="${namespace}/right_thumb_distal_link" />
     <axis
       xyz="1 0 0" />
     <limit
@@ -218,12 +219,12 @@
       effort="1.1"
       velocity="2.5303" />
     <mimic
-      joint="right_thumb_proximal_joint"
+      joint="${namespace}/right_thumb_proximal_joint"
       multiplier="1"
       offset="0" />
   </joint>
   <link
-    name="right_thumb_tip">
+    name="${namespace}/right_thumb_tip">
     <inertial>
       <origin
         xyz="0 -8.79922039356273E-05 -1.73472347597681E-18"
@@ -263,15 +264,15 @@
     </collision>
   </link>
   <joint
-    name="right_thumb_tip"
+    name="${namespace}/right_thumb_tip"
     type="fixed">
     <origin
       xyz="0 0.026529 -0.0017734"
       rpy="-0.06675 0 0" />
     <parent
-      link="right_thumb_distal_link" />
+      link="${namespace}/right_thumb_distal_link" />
     <child
-      link="right_thumb_tip" />
+      link="${namespace}/right_thumb_tip" />
     <axis
       xyz="1 0 0" />
     <limit
@@ -281,7 +282,7 @@
       velocity="0" />
   </joint>
   <link
-    name="right_index_proximal_link">
+    name="${namespace}/right_index_proximal_link">
     <inertial>
       <origin
         xyz="-0.00223495193199565 3.15874577787312E-06 0.0176402020341366"
@@ -321,15 +322,15 @@
     </collision>
   </link>
   <joint
-    name="right_index_proximal_joint"
+    name="${namespace}/right_index_proximal_joint"
     type="fixed">
     <origin
       xyz="-0.0021181 0.029568 0.080876"
       rpy="-0.11819 0.14743 -0.17422" />
     <parent
-      link="right_base_link" />
+      link="${namespace}/right_base_link" />
     <child
-      link="right_index_proximal_link" />
+      link="${namespace}/right_index_proximal_link" />
     <axis
       xyz="0 1 0" />
     <limit
@@ -339,7 +340,7 @@
       velocity="2.2685" />
   </joint>
   <link
-    name="right_index_distal_link">
+    name="${namespace}/right_index_distal_link">
     <inertial>
       <origin
         xyz="0.0041834128909843 1.16430016613989E-07 0.0153643358620559"
@@ -379,15 +380,15 @@
     </collision>
   </link>
   <joint
-    name="right_index_distal_joint"
+    name="${namespace}/right_index_distal_joint"
     type="fixed">
     <origin
       xyz="0 0 0.032"
       rpy="0 0 0" />
     <parent
-      link="right_index_proximal_link" />
+      link="${namespace}/right_index_proximal_link" />
     <child
-      link="right_index_distal_link" />
+      link="${namespace}/right_index_distal_link" />
     <axis
       xyz="0 1 0" />
     <limit
@@ -396,12 +397,12 @@
       effort="2"
       velocity="2.2685" />
     <mimic
-      joint="right_index_proximal_joint"
+      joint="${namespace}/right_index_proximal_joint"
       multiplier="1.155"
       offset="0" />
   </joint>
   <link
-    name="right_index_tip">
+    name="${namespace}/right_index_tip">
     <inertial>
       <origin
         xyz="0 6.93889390390723E-18 2.77555756156289E-17"
@@ -441,15 +442,15 @@
     </collision>
   </link>
   <joint
-    name="right_index_tip_joint"
+    name="${namespace}/right_index_tip_joint"
     type="fixed">
     <origin
       xyz="0.011097 0 0.035739"
       rpy="0 0.4756 0" />
     <parent
-      link="right_index_distal_link" />
+      link="${namespace}/right_index_distal_link" />
     <child
-      link="right_index_tip" />
+      link="${namespace}/right_index_tip" />
     <axis
       xyz="0 1 0" />
     <limit
@@ -459,7 +460,7 @@
       velocity="0" />
   </joint>
   <link
-    name="right_middle_proximal_link">
+    name="${namespace}/right_middle_proximal_link">
     <inertial>
       <origin
         xyz="-0.00222511101223747 5.25632286623237E-06 0.0203007776295123"
@@ -499,15 +500,15 @@
     </collision>
   </link>
   <joint
-    name="right_middle_proximal_joint"
+    name="${namespace}/right_middle_proximal_joint"
     type="fixed">
     <origin
       xyz="-0.0045767 0.010051 0.084993"
       rpy="-0.039468 0.1483 -0.057975" />
     <parent
-      link="right_base_link" />
+      link="${namespace}/right_base_link" />
     <child
-      link="right_middle_proximal_link" />
+      link="${namespace}/right_middle_proximal_link" />
     <axis
       xyz="0 1 0" />
     <limit
@@ -517,7 +518,7 @@
       velocity="2.2685" />
   </joint>
   <link
-    name="right_middle_distal_link">
+    name="${namespace}/right_middle_distal_link">
     <inertial>
       <origin
         xyz="0.00498634699274855 3.20799606209204E-07 0.0178210324631583"
@@ -557,15 +558,15 @@
     </collision>
   </link>
   <joint
-    name="right_middle_distal_joint"
+    name="${namespace}/right_middle_distal_joint"
     type="fixed">
     <origin
       xyz="0 0 0.037"
       rpy="0 0 0" />
     <parent
-      link="right_middle_proximal_link" />
+      link="${namespace}/right_middle_proximal_link" />
     <child
-      link="right_middle_distal_link" />
+      link="${namespace}/right_middle_distal_link" />
     <axis
       xyz="0 1 0" />
     <limit
@@ -574,12 +575,12 @@
       effort="2"
       velocity="2.2685" />
     <mimic
-      joint="right_middle_proximal_joint"
+      joint="${namespace}/right_middle_proximal_joint"
       multiplier="1.155"
       offset="0" />
   </joint>
   <link
-    name="right_middle_tip">
+    name="${namespace}/right_middle_tip">
     <inertial>
       <origin
         xyz="0 -3.46944695195361E-18 0"
@@ -619,15 +620,15 @@
     </collision>
   </link>
   <joint
-    name="right_middle_tip_joint"
+    name="${namespace}/right_middle_tip_joint"
     type="fixed">
     <origin
       xyz="0.012558 0 0.040442"
       rpy="0 0.4756 0" />
     <parent
-      link="right_middle_distal_link" />
+      link="${namespace}/right_middle_distal_link" />
     <child
-      link="right_middle_tip" />
+      link="${namespace}/right_middle_tip" />
     <axis
       xyz="0 1 0" />
     <limit
@@ -637,7 +638,7 @@
       velocity="0" />
   </joint>
   <link
-    name="right_ring_proximal_link">
+    name="${namespace}/right_ring_proximal_link">
     <inertial>
       <origin
         xyz="-0.00234494526421452 5.87954755615957E-06 0.019177402549597"
@@ -677,15 +678,15 @@
     </collision>
   </link>
   <joint
-    name="right_ring_proximal_joint"
+    name="${namespace}/right_ring_proximal_joint"
     type="fixed">
     <origin
       xyz="-0.0046709 -0.010037 0.083982"
       rpy="0.039462 0.14721 0.057932" />
     <parent
-      link="right_base_link" />
+      link="${namespace}/right_base_link" />
     <child
-      link="right_ring_proximal_link" />
+      link="${namespace}/right_ring_proximal_link" />
     <axis
       xyz="0 1 0" />
     <limit
@@ -695,7 +696,7 @@
       velocity="2.2685" />
   </joint>
   <link
-    name="right_ring_distal_link">
+    name="${namespace}/right_ring_distal_link">
     <inertial>
       <origin
         xyz="0.0047128205390484 -2.41851534580478E-08 0.0172486576240172"
@@ -735,15 +736,15 @@
     </collision>
   </link>
   <joint
-    name="right_ring_distal_joint"
+    name="${namespace}/right_ring_distal_joint"
     type="fixed">
     <origin
       xyz="0 0 0.035"
       rpy="0 0 0" />
     <parent
-      link="right_ring_proximal_link" />
+      link="${namespace}/right_ring_proximal_link" />
     <child
-      link="right_ring_distal_link" />
+      link="${namespace}/right_ring_distal_link" />
     <axis
       xyz="0 1 0" />
     <limit
@@ -752,12 +753,12 @@
       effort="2"
       velocity="2.2685" />
     <mimic
-      joint="right_ring_proximal_joint"
+      joint="${namespace}/right_ring_proximal_joint"
       multiplier="1.155"
       offset="0" />
   </joint>
   <link
-    name="right_ring_tip">
+    name="${namespace}/right_ring_tip">
     <inertial>
       <origin
         xyz="0 0 0"
@@ -797,15 +798,15 @@
     </collision>
   </link>
   <joint
-    name="right_ring_tip_joint"
+    name="${namespace}/right_ring_tip_joint"
     type="fixed">
     <origin
       xyz="0.012266 0 0.039501"
       rpy="0 0.4756 0" />
     <parent
-      link="right_ring_distal_link" />
+      link="${namespace}/right_ring_distal_link" />
     <child
-      link="right_ring_tip" />
+      link="${namespace}/right_ring_tip" />
     <axis
       xyz="0 1 0" />
     <limit
@@ -815,7 +816,7 @@
       velocity="0" />
   </joint>
   <link
-    name="right_pinky_proximal_link">
+    name="${namespace}/right_pinky_proximal_link">
     <inertial>
       <origin
         xyz="-0.00213212021184178 7.75039446098032E-06 0.0160671583560383"
@@ -855,15 +856,15 @@
     </collision>
   </link>
   <joint
-    name="right_pinky_proximal_joint"
+    name="${namespace}/right_pinky_proximal_joint"
     type="fixed">
     <origin
       xyz="-0.0023566 -0.029366 0.078694"
       rpy="0.11815 0.14491 0.17392" />
     <parent
-      link="right_base_link" />
+      link="${namespace}/right_base_link" />
     <child
-      link="right_pinky_proximal_link" />
+      link="${namespace}/right_pinky_proximal_link" />
     <axis
       xyz="0 1 0" />
     <limit
@@ -873,7 +874,7 @@
       velocity="2.2685" />
   </joint>
   <link
-    name="right_pinky_distal_link">
+    name="${namespace}/right_pinky_distal_link">
     <inertial>
       <origin
         xyz="0.00398575709812823 -1.18733454507539E-07 0.0141073520225541"
@@ -913,15 +914,15 @@
     </collision>
   </link>
   <joint
-    name="right_pinky_distal_joint"
+    name="${namespace}/right_pinky_distal_joint"
     type="fixed">
     <origin
       xyz="0 0 0.029"
       rpy="0 0 0" />
     <parent
-      link="right_pinky_proximal_link" />
+      link="${namespace}/right_pinky_proximal_link" />
     <child
-      link="right_pinky_distal_link" />
+      link="${namespace}/right_pinky_distal_link" />
     <axis
       xyz="0 1 0" />
     <limit
@@ -930,12 +931,12 @@
       effort="2"
       velocity="2.2685" />
     <mimic
-      joint="right_pinky_proximal_joint"
+      joint="${namespace}/right_pinky_proximal_joint"
       multiplier="1.155"
       offset="0" />
   </joint>
   <link
-    name="right_pinky_tip">
+    name="${namespace}/right_pinky_tip">
     <inertial>
       <origin
         xyz="3.46944695195361E-18 -5.20417042793042E-18 0"
@@ -975,15 +976,15 @@
     </collision>
   </link>
   <joint
-    name="right_pinky_tip_joint"
+    name="${namespace}/right_pinky_tip_joint"
     type="fixed">
     <origin
       xyz="0.010221 0 0.032918"
       rpy="0 0.4756 0" />
     <parent
-      link="right_pinky_distal_link" />
+      link="${namespace}/right_pinky_distal_link" />
     <child
-      link="right_pinky_tip" />
+      link="${namespace}/right_pinky_tip" />
     <axis
       xyz="0 1 0" />
     <limit
@@ -992,4 +993,7 @@
       effort="0"
       velocity="0" />
   </joint>
+</xacro:macro>
+
+
 </robot>
